@@ -10,6 +10,8 @@ class Lounge(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
 
 class Table(models.Model):
     lounge = models.ForeignKey(Lounge, on_delete=models.CASCADE)
@@ -18,6 +20,8 @@ class Table(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
 
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
