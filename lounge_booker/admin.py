@@ -33,8 +33,6 @@ class LoungeAdmin(admin.ModelAdmin):
     inlines = (BusinessHourInline, TableInline, SettingInline,)
 
 
-    def __str__(self):
-        return self.name
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
