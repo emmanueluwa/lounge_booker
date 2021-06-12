@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from .models import Lounge
+from .forms import UserForm
 
 def home_page(request):
     if not request.user.is_authenticated:
@@ -31,9 +32,24 @@ def login_page(request):
     return render(
         request=request, template_name="login.html", context={"login_form": form},
     )
-    
+
 def signup_page(request):
-    return render(request, "signup.html", context={})
+    if request.method == "POST":
+        form = UserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Your registration was succesful, thank you.")
+            return redirect("lounge_booker:home")
+        messages.error(request, "Unsuccesful registration. Invalid Information, please try again.")
+    form = UserForm
+    return render(
+        request=request,
+        template_name="signup.html",
+        context={"register_form": form},
+        )
+
+
 
 
 def logout_page(request):
