@@ -22,7 +22,7 @@ def login_page(request):
             user = authenticate(username=username, password=password) 
             if user is not None:
                 login(request, user)
-                messages.info(request, f"Welome {username}, you are now logged in.")
+                messages.info(request, f"Hello {username}, you are now logged in.")
                 return redirect("lounge_booker:home")
             else:
                 messages.error(request, "Invalid username or password, please try again.")
@@ -51,6 +51,8 @@ def signup_page(request):
 
 
 
-
 def logout_page(request):
-    return render(request, "signup.html", context={})
+    logout(request)
+    messages.info(request, "You have logged out succesfully, see you soon.")
+    return redirect("lounge_booker:login") 
+
