@@ -1,6 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+
 
 from .models import Booking
 
@@ -36,3 +39,11 @@ class BookingForm(forms.ModelForm):
           'table',
           'date',
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        date = cleaned_data.get("date")
+
+        if date:
+            if date < timezone.now():
+                raise ValidationError("Please choose a date and time that is in the future, thank you.")

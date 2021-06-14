@@ -76,15 +76,14 @@ def book_lounge(request, lounge_id):
          
         if form.is_valid():
             booking = form.save(commit=False)
-            booking.lounge = lounge
             booking.user = request.user
+            booking.lounge = lounge
             booking.save()
             messages.info(request, f"You have succesfully booked with {lounge}. Enjoy!")
             return redirect("lounge_booker:home")
     
     else:
-        form = BookingForm
+        form = BookingForm()
 
-    form = BookingForm
     return render(request=request, template_name="book_lounge.html", context={"booking_form": form})
     print(lounge)
