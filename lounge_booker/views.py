@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from .models import Lounge
-from .forms import UserForm
+from .forms import UserForm, BookingForm
 
 def home_page(request):
     if not request.user.is_authenticated:
@@ -56,3 +56,35 @@ def logout_page(request):
     messages.info(request, "You have logged out succesfully, see you soon.")
     return redirect("lounge_booker:login") 
 
+
+
+def book_lounge(request, lounge_id):
+    if not request.user.is_authenticated:
+        return redirect("lounge_booker:login")
+
+    try:
+        lounge = Lounge.objects.get(id=lounge_id)
+    except Lounge.DoesNotExist:
+        lounge = None
+
+    if lounge is None:
+        messages.error(request, "This lounge is not available, please select another.")
+        return redirect("lounge_booker:home")
+    
+    if request.method == "POST":
+        form = BookingForm(request.POST)
+         
+        if form.is_valid():
+            booking = form.save(commit=False)
+            booking.lounge = lounge
+            booking.user = request.user
+            booking.save()
+            messages.info(request, f"You have succesfully booked with {lounge}. Enjoy!")
+            return redirect("lounge_booker:home")
+    
+    else:
+        form = BookingForm
+
+    form = BookingForm
+    return render(request=request, template_name="book_lounge.html", context={"booking_form": form})
+    print(lounge)

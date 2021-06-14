@@ -1,7 +1,10 @@
 {% extends "base.html" %} {% block content %}
 <h1>HOME PAGE</h1>
 {% for lounge in lounges %}
-<p>{{ lounge.name }}</p>
+<p>
+  {{ lounge.name }}
+  <a href="{% url 'lounge_booker:book-lounge' lounge.id %}">Book a Table</a>
+</p>
 {% empty %}
 <p>There are no lounges to show</p>
 {% endfor %} {% endblock content %}
