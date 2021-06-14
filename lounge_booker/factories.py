@@ -24,7 +24,7 @@ class LoungeFactory(factory.django.DjangoModelFactory):
     postcode = "E17 8BL"
 
 
-class TableFactory(factory.django.DjangoModelFactory):
+class LoungeBookFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Table
 
@@ -39,7 +39,7 @@ class BookingFactory(factory.django.DjangoModelFactory):
 
     user = factory.SubFactory(UserFactory)
     lounge = factory.SubFactory(LoungeFactory)
-    table = factory.SubFactory(TableFactory)
+    table = factory.SubFactory(LoungeBookFactory)
     date = datetime.date.today() + datetime.timedelta(days=1)  # tomorrow
 
 
