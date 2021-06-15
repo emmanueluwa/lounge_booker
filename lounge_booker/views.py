@@ -24,8 +24,6 @@ def login_page(request):
                 login(request, user)
                 messages.info(request, f"Hello {username}, you are now logged in.")
                 return redirect("lounge_booker:home")
-            else:
-                messages.error(request, "Invalid username or password, please try again.")
         else:
             messages.error(request, "Invalid username or password, please try again.")
     form = AuthenticationForm()
@@ -41,8 +39,8 @@ def signup_page(request):
             login(request, user)
             messages.success(request, "Your registration was succesful, thank you.")
             return redirect("lounge_booker:home")
-        messages.error(request, "Unsuccesful registration. Invalid Information, please try again.")
-    form = UserForm
+        messages.error(request, "Unsuccesful registration. Invalid information, please try again.")
+    form = UserForm()
     return render(
         request=request,
         template_name="signup.html",

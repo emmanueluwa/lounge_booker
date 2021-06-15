@@ -39,7 +39,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "lounge_booker.apps.LoungeBookerConfig",
+    "django_nose",
 ]
+
+# Use nose to run all tests
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+# Tell nose to measure coverage on the 'lounge_booker'
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=lounge_booker',
+]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

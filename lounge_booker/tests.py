@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from .factories import LoungeFactory, LoungeBookFactory, UserFactory
-from .forms import BookingForm
+from .forms import BookingForm, UserForm
 from .models import Lounge
 from django.contrib.auth.forms import AuthenticationForm
 
@@ -78,3 +78,49 @@ class LoginPageTests(TestCase):
         message = list(response.context.get("messages"))[0]
         self.assertEqual(message.tags, "error")
         self.assertTrue("Invalid username or password, please try again." in message.message)
+
+
+class SignUpPageTests(TestCase):
+    def setUp(self):
+        self.url = "/signup"
+        self.response = self.client.get(self.url)
+
+    def test_blank_signup_form(self):
+        context_form = self.response.context["register_form"]
+
+        self.assertEqual(self.response.status_code, 200)
+        self.assertIsInstance(context_form, UserForm)
+        self.assertTemplateUsed(self.response, "signup.html")
+
+    def test_successful_signup(self):
+        data = {
+            'first_name': "Tai", 
+            'last_name': "Mansa",
+            'username': "Tai-m",
+            'email': "Taim@hotmail.com",
+            'password1': "top-secret",
+            'password2': "top-secret",
+        }
+        response = self.client.post(self.url, data, follow=True)
+
+        message = list(response.context.get("messages"))[0]
+        self.assertEqual(message.tags, "success")
+        self.assertTrue("Your registration was succesful, thank you." in message.message)
+        self.assertRedirects(response, "/", status_code=302)
+
+    def test_unsuccesful_signup(self):
+        data = {
+            'first_name': "", 
+            'last_name': "",
+            'username': "",
+            'email': "",
+            'password1': "",
+            'password2': "",
+        }
+        response = self.client.post(self.url, data, follow=True)
+
+        message = list(response.context.get("messages"))[0]
+        self.assertEqual(message.tags, "error")
+        self.assertTrue(
+            "Unsuccesful registration. Invalid information, please try again." in message.message
+        )
