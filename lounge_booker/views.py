@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
-from .models import Lounge
+from .models import Lounge, Booking
 from .forms import UserForm, BookingForm
 
 def home_page(request):
@@ -85,3 +85,14 @@ def book_lounge(request, lounge_id):
 
     return render(request=request, template_name="book_lounge.html", context={"booking_form": form})
     print(lounge)
+
+
+
+def my_bookings(request):
+    if not request.user.is_authenticated:
+        return redirect("lounge_booker:login")
+
+    context = {"bookings": Booking.objects.filter(user=request.user)} 
+    return render(request, "my_bookings.html", context=context) 
+
+
