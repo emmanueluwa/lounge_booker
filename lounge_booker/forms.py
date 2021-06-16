@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 
-from .models import Booking
+from .models import Booking, Table
 
 class UserForm(UserCreationForm):
     first_name = forms.CharField(required=True)
@@ -40,6 +40,12 @@ class BookingForm(forms.ModelForm):
           format="%Y-%m-%dT%H:%M",
         ),
     )
+
+    def __init__(self, lounge, *args, **kwargs):
+        super(BookingForm, self).__init__(*args, *kwargs)
+        self.fields["table"].queryset = Table.objects.filter(
+            lounge_id=lounge.id
+        )
 
 
     class Meta:

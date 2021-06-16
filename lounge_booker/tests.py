@@ -7,7 +7,7 @@ from django.test import TestCase
 
 from .factories import LoungeFactory, LoungeBookFactory, UserFactory
 from .forms import BookingForm, UserForm
-from .models import Lounge
+from .models import Lounge, Table
 from django.contrib.auth.forms import AuthenticationForm
 
 
@@ -184,4 +184,15 @@ class BookingLoungeTests(TestCase):
         self.assertEqual(message.tags, "info")
         self.assertTrue(f"You have succesfully booked with {self.lounge}. Enjoy!" in message.message)
         self.assertRedirects(response, "/", status_code=302)
-        
+
+    def test_table_queryset(self):
+        LoungeBookFactory()
+
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, follow=True)
+        context_form = response.context["booking_form"]
+
+        current_queryset = context_form.fields["table"].queryset
+        expected_queryset = Table.objects.filter(lounge_id=self.lounge.id)
+
+        self.assertEqual(list(current_queryset), list(expected_queryset))

@@ -70,7 +70,7 @@ def book_lounge(request, lounge_id):
         return redirect("lounge_booker:home")
     
     if request.method == "POST":
-        form = BookingForm(request.POST)
+        form = BookingForm(lounge, request.POST)
          
         if form.is_valid():
             booking = form.save(commit=False)
@@ -81,7 +81,7 @@ def book_lounge(request, lounge_id):
             return redirect("lounge_booker:home")
     
     else:
-        form = BookingForm()
+        form = BookingForm(lounge)
 
     return render(request=request, template_name="book_lounge.html", context={"booking_form": form})
     print(lounge)
