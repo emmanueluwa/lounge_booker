@@ -137,3 +137,51 @@ class LogoutPageTests(TestCase):
         self.assertEqual(message.tags, "info")
         self.assertEqual(message.message, "You have logged out succesfully, see you soon.")
         self.assertRedirects(self.response, "/login", status_code=302)
+
+
+class BookingLoungeTests(TestCase):
+    def setUp(self):
+        self.user = UserFactory()
+        self.lounge = LoungeFactory()
+        self.table = LoungeBookFactory(lounge=self.lounge)
+        self.url = f"/book-lounge/{self.lounge.id}"
+
+    def test_authentication(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+
+    def test_invalid_lounge_id(self):
+        self.client.force_login(self.user)
+        url = "/book-lounge/99999"
+
+        response = self.client.get(url, follow=True)
+        message = list(response.context.get("messages"))[0]
+
+        self.assertEqual(message.tags, "error")
+        self.assertTrue("This lounge is not available, please select another." in message.message)
+        self.assertRedirects(response, "/", status_code=302)
+
+    def test_get_blank_form(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, follow=True)
+        context_form = response.context["booking_form"]
+
+        self.assertTemplateUsed(response, "book_lounge.html")
+        self.assertIsInstance(context_form, BookingForm)
+
+    def test_successful_post(self):
+        self.client.force_login(self.user)
+        data ={
+            "user" : self.user,
+            "lounge": self.lounge.id,
+            "table": self.lounge.tables.first().id,
+            "date": (datetime.datetime.today() + datetime.timedelta(days=3)).strftime(
+                "%Y-%m-%dT%H:%M"
+            ),        }
+
+        response = self.client.post(self.url, data, follow=True)
+        message = list(response.context.get("messages"))[0]
+        self.assertEqual(message.tags, "info")
+        self.assertTrue(f"You have succesfully booked with {self.lounge}. Enjoy!" in message.message)
+        self.assertRedirects(response, "/", status_code=302)
+        

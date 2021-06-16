@@ -14,7 +14,7 @@ class Lounge(models.Model):
         return self.name
 
 class Table(models.Model):
-    lounge = models.ForeignKey(Lounge, on_delete=models.CASCADE)
+    lounge = models.ForeignKey(Lounge, on_delete=models.CASCADE, related_name="tables")
     name = models.CharField(max_length=250)
     capacity = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
