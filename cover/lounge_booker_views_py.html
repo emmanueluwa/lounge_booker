@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for lounge_booker\views.py: 98%</title>
+    <title>Coverage for lounge_booker\views.py: 99%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
@@ -18,12 +18,12 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>lounge_booker\views.py</b> :
-            <span class="pc_cov">98%</span>
+            <span class="pc_cov">99%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
-            62 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">61 run</button>
+            75 statements &nbsp;
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">74 run</button>
             <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">1 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
@@ -55,8 +55,8 @@
     <p id="t1" class="run"><span class="n"><a href="#t1">1</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">contrib</span> <span class="key">import</span> <span class="nam">messages</span>&nbsp;</span><span class="r"></span></p>
     <p id="t2" class="run"><span class="n"><a href="#t2">2</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">contrib</span><span class="op">.</span><span class="nam">auth</span> <span class="key">import</span> <span class="nam">authenticate</span><span class="op">,</span> <span class="nam">login</span><span class="op">,</span> <span class="nam">logout</span>&nbsp;</span><span class="r"></span></p>
     <p id="t3" class="run"><span class="n"><a href="#t3">3</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">contrib</span><span class="op">.</span><span class="nam">auth</span><span class="op">.</span><span class="nam">forms</span> <span class="key">import</span> <span class="nam">AuthenticationForm</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t4" class="run"><span class="n"><a href="#t4">4</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">shortcuts</span> <span class="key">import</span> <span class="nam">render</span><span class="op">,</span> <span class="nam">redirect</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t5" class="run"><span class="n"><a href="#t5">5</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">models</span> <span class="key">import</span> <span class="nam">Lounge</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t4" class="run"><span class="n"><a href="#t4">4</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">shortcuts</span> <span class="key">import</span> <span class="nam">render</span><span class="op">,</span> <span class="nam">redirect</span><span class="op">,</span> <span class="nam">get_object_or_404</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t5" class="run"><span class="n"><a href="#t5">5</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">models</span> <span class="key">import</span> <span class="nam">Lounge</span><span class="op">,</span> <span class="nam">Booking</span>&nbsp;</span><span class="r"></span></p>
     <p id="t6" class="run"><span class="n"><a href="#t6">6</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">forms</span> <span class="key">import</span> <span class="nam">UserForm</span><span class="op">,</span> <span class="nam">BookingForm</span>&nbsp;</span><span class="r"></span></p>
     <p id="t7" class="pln"><span class="n"><a href="#t7">7</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t8" class="run"><span class="n"><a href="#t8">8</a></span><span class="t"><span class="key">def</span> <span class="nam">home_page</span><span class="op">(</span><span class="nam">request</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -124,7 +124,7 @@
     <p id="t70" class="run"><span class="n"><a href="#t70">70</a></span><span class="t">        <span class="key">return</span> <span class="nam">redirect</span><span class="op">(</span><span class="str">"lounge_booker:home"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t71" class="pln"><span class="n"><a href="#t71">71</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t72" class="run"><span class="n"><a href="#t72">72</a></span><span class="t">    <span class="key">if</span> <span class="nam">request</span><span class="op">.</span><span class="nam">method</span> <span class="op">==</span> <span class="str">"POST"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t73" class="run"><span class="n"><a href="#t73">73</a></span><span class="t">        <span class="nam">form</span> <span class="op">=</span> <span class="nam">BookingForm</span><span class="op">(</span><span class="nam">request</span><span class="op">.</span><span class="nam">POST</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t73" class="run"><span class="n"><a href="#t73">73</a></span><span class="t">        <span class="nam">form</span> <span class="op">=</span> <span class="nam">BookingForm</span><span class="op">(</span><span class="nam">lounge</span><span class="op">,</span> <span class="nam">request</span><span class="op">.</span><span class="nam">POST</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t74" class="pln"><span class="n"><a href="#t74">74</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t75" class="run"><span class="n"><a href="#t75">75</a></span><span class="t">        <span class="key">if</span> <span class="nam">form</span><span class="op">.</span><span class="nam">is_valid</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t76" class="run"><span class="n"><a href="#t76">76</a></span><span class="t">            <span class="nam">booking</span> <span class="op">=</span> <span class="nam">form</span><span class="op">.</span><span class="nam">save</span><span class="op">(</span><span class="nam">commit</span><span class="op">=</span><span class="key">False</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -135,16 +135,40 @@
     <p id="t81" class="run"><span class="n"><a href="#t81">81</a></span><span class="t">            <span class="key">return</span> <span class="nam">redirect</span><span class="op">(</span><span class="str">"lounge_booker:home"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t82" class="pln"><span class="n"><a href="#t82">82</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t83" class="pln"><span class="n"><a href="#t83">83</a></span><span class="t">    <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t84" class="run"><span class="n"><a href="#t84">84</a></span><span class="t">        <span class="nam">form</span> <span class="op">=</span> <span class="nam">BookingForm</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t84" class="run"><span class="n"><a href="#t84">84</a></span><span class="t">        <span class="nam">form</span> <span class="op">=</span> <span class="nam">BookingForm</span><span class="op">(</span><span class="nam">lounge</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t85" class="pln"><span class="n"><a href="#t85">85</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t86" class="run"><span class="n"><a href="#t86">86</a></span><span class="t">    <span class="key">return</span> <span class="nam">render</span><span class="op">(</span><span class="nam">request</span><span class="op">=</span><span class="nam">request</span><span class="op">,</span> <span class="nam">template_name</span><span class="op">=</span><span class="str">"book_lounge.html"</span><span class="op">,</span> <span class="nam">context</span><span class="op">=</span><span class="op">{</span><span class="str">"booking_form"</span><span class="op">:</span> <span class="nam">form</span><span class="op">}</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t87" class="mis show_mis"><span class="n"><a href="#t87">87</a></span><span class="t">    <span class="nam">print</span><span class="op">(</span><span class="nam">lounge</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t88" class="pln"><span class="n"><a href="#t88">88</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t89" class="pln"><span class="n"><a href="#t89">89</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t90" class="pln"><span class="n"><a href="#t90">90</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t91" class="run"><span class="n"><a href="#t91">91</a></span><span class="t"><span class="key">def</span> <span class="nam">my_bookings</span><span class="op">(</span><span class="nam">request</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t92" class="run"><span class="n"><a href="#t92">92</a></span><span class="t">    <span class="key">if</span> <span class="key">not</span> <span class="nam">request</span><span class="op">.</span><span class="nam">user</span><span class="op">.</span><span class="nam">is_authenticated</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t93" class="run"><span class="n"><a href="#t93">93</a></span><span class="t">        <span class="key">return</span> <span class="nam">redirect</span><span class="op">(</span><span class="str">"lounge_booker:login"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t94" class="pln"><span class="n"><a href="#t94">94</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t95" class="run"><span class="n"><a href="#t95">95</a></span><span class="t">    <span class="nam">context</span> <span class="op">=</span> <span class="op">{</span><span class="str">"bookings"</span><span class="op">:</span> <span class="nam">Booking</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">user</span><span class="op">=</span><span class="nam">request</span><span class="op">.</span><span class="nam">user</span><span class="op">)</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t96" class="run"><span class="n"><a href="#t96">96</a></span><span class="t">    <span class="key">return</span> <span class="nam">render</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="str">"my_bookings.html"</span><span class="op">,</span> <span class="nam">context</span><span class="op">=</span><span class="nam">context</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t97" class="pln"><span class="n"><a href="#t97">97</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t98" class="pln"><span class="n"><a href="#t98">98</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t99" class="run"><span class="n"><a href="#t99">99</a></span><span class="t"><span class="key">def</span> <span class="nam">delete_booking</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="nam">booking_id</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t100" class="run"><span class="n"><a href="#t100">100</a></span><span class="t">    <span class="key">if</span> <span class="key">not</span> <span class="nam">request</span><span class="op">.</span><span class="nam">user</span><span class="op">.</span><span class="nam">is_authenticated</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t101" class="run"><span class="n"><a href="#t101">101</a></span><span class="t">        <span class="key">return</span> <span class="nam">redirect</span><span class="op">(</span><span class="str">"lounge_booker:login"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t102" class="pln"><span class="n"><a href="#t102">102</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t103" class="run"><span class="n"><a href="#t103">103</a></span><span class="t">    <span class="nam">booking</span> <span class="op">=</span> <span class="nam">get_object_or_404</span><span class="op">(</span><span class="nam">Booking</span><span class="op">,</span> <span class="nam">pk</span><span class="op">=</span><span class="nam">booking_id</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t104" class="pln"><span class="n"><a href="#t104">104</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t105" class="run"><span class="n"><a href="#t105">105</a></span><span class="t">    <span class="key">if</span> <span class="nam">request</span><span class="op">.</span><span class="nam">method</span> <span class="op">==</span> <span class="str">"POST"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t106" class="run"><span class="n"><a href="#t106">106</a></span><span class="t">        <span class="nam">booking</span><span class="op">.</span><span class="nam">delete</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t107" class="run"><span class="n"><a href="#t107">107</a></span><span class="t">        <span class="key">return</span> <span class="nam">redirect</span><span class="op">(</span><span class="str">"lounge_booker:my-bookings"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t108" class="pln"><span class="n"><a href="#t108">108</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t109" class="run"><span class="n"><a href="#t109">109</a></span><span class="t">    <span class="key">return</span> <span class="nam">render</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="str">"delete_booking.html"</span><span class="op">,</span> <span class="nam">context</span><span class="op">=</span><span class="op">{</span><span class="str">"booking"</span><span class="op">:</span> <span class="nam">booking</span><span class="op">}</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t110" class="pln"><span class="n"><a href="#t110">110</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t111" class="pln"><span class="n"><a href="#t111">111</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
 </div>
 <div id="footer">
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2021-06-16 10:48 +0100
+            created at 2021-06-16 17:34 +0100
         </p>
     </div>
 </div>

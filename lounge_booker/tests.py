@@ -1,3 +1,4 @@
+from django.http import response
 from django.test import TestCase
 
 import datetime
@@ -7,7 +8,7 @@ from django.test import TestCase
 
 from .factories import LoungeFactory, LoungeBookFactory, UserFactory, BookingFactory
 from .forms import BookingForm, UserForm
-from .models import Lounge, Table
+from .models import Lounge, Table, Booking
 from django.contrib.auth.forms import AuthenticationForm
 
 
@@ -225,3 +226,77 @@ class MyBookingsTests(TestCase):
         response = self.client.get(self.url)
         context = response.context["bookings"]
         self.assertEqual(list(context), [self.booking2])
+
+class DeleteMyBookingsTests(TestCase):
+    def setUp(self):
+        self.user = UserFactory(username="yanick")
+        self.booking = BookingFactory()
+        self.url = f"/delete-booking/{self.booking.id}"
+
+    def test_authentication(self):
+        response = self.client.get(self.url)
+        self.assertRedirects(response, "/login", status_code=302)
+
+    def test_booking_exists(self):
+        self.client.force_login(self.user)
+        url = "/delete-booking/12345"
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_template_rendered(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "delete_booking.html")
+
+    def test_delete_booking_context(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        context = response.context["booking"]
+
+        self.assertEqual(context, self.booking)
+
+    def test_successful_delete(self):
+        self.client.force_login(self.user)
+
+        response = self.client.post(self.url)
+        deleted_booking_queryset = Booking.objects.filter(id=self.booking.id)
+
+        self.assertEqual(list(deleted_booking_queryset), [])
+        self.assertRedirects(response, "/my-bookings", status_code=302)
+
+class UpdateMyBookingsTests(TestCase):
+    def setUp(self):
+        self.user = UserFactory(username="nino")
+        self.lounge = LoungeFactory()
+        self.table = LoungeBookFactory(lounge=self.lounge)
+        self.booking = BookingFactory(
+            user=self.user, lounge=self.lounge, table=self.table
+        )
+        self.url = f"/update-booking/{self.booking.id}"
+
+    def test_authentication(self):
+        response = self.client.get(self.url)
+        self.assertRedirects(response, "/login", status_code=302)
+
+   
+    def test_booking_exists(self):
+        self.client.force_login(self.user)
+        url = "/update-booking/123456"
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
+
+   
+    def test_template_rendered(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "update_booking.html")
+
+   
+    # def test_update_booking_context(self):
+    #     self.client.force_login(self.user)
+    #     response = self.client.get(self.url)
+
+    #     current_context = response.context["booking_form"]
+    #     self.assertIsInstance(current_context, BookingForm)

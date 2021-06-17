@@ -46,6 +46,8 @@ class BookingForm(forms.ModelForm):
         self.fields["table"].queryset = Table.objects.filter(
             lounge_id=lounge.id
         )
+        
+
 
 
     class Meta:
@@ -57,8 +59,9 @@ class BookingForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+
         date = cleaned_data.get("date")
 
         if date:
             if date < timezone.now():
-                raise ValidationError("Please choose a date and time that is in the future, thank you.")
+                raise ValidationError("Please choose a date and time that is in the future, thank you.", params={"date": date})

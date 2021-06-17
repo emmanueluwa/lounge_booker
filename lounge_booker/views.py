@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Lounge, Booking
 from .forms import UserForm, BookingForm
 
@@ -83,8 +83,8 @@ def book_lounge(request, lounge_id):
     else:
         form = BookingForm(lounge)
 
-    return render(request=request, template_name="book_lounge.html", context={"booking_form": form})
-    print(lounge)
+    return render(request=request, template_name="book_lounge.html", context={"booking_form": form},)
+
 
 
 
@@ -94,5 +94,31 @@ def my_bookings(request):
 
     context = {"bookings": Booking.objects.filter(user=request.user)} 
     return render(request, "my_bookings.html", context=context) 
+
+
+def delete_booking(request, booking_id):
+    if not request.user.is_authenticated:
+        return redirect("lounge_booker:login")
+
+    booking = get_object_or_404(Booking, pk=booking_id)
+
+    if request.method == "POST":
+        booking.delete()
+        return redirect("lounge_booker:my-bookings")
+
+    return render(request, "delete_booking.html", context={"booking": booking})
+
+
+def update_booking(request, booking_id):
+    if not request.user.is_authenticated:
+        return redirect("lounge_booker:login")
+
+    
+    booking = get_object_or_404(Booking, pk=booking_id)
+
+    booking_form = {"booking_form": BookingForm(booking.lounge, instance=booking)}
+    breakpoint()
+    return render(request, "update_booking.html", context=booking_form)
+
 
 
