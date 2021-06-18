@@ -41,6 +41,8 @@ class BookingFactory(factory.django.DjangoModelFactory):
     lounge = factory.SubFactory(LoungeFactory)
     table = factory.SubFactory(LoungeBookFactory)
     date = datetime.date.today() + datetime.timedelta(days=1)  # tomorrow
+    total_guests = 3
+
 
 
 class BusinessHourFactory(factory.django.DjangoModelFactory):

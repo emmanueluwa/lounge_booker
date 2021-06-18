@@ -176,9 +176,8 @@ class BookingLoungeTests(TestCase):
             "user" : self.user,
             "lounge": self.lounge.id,
             "table": self.lounge.tables.first().id,
-            "date": (datetime.datetime.today() + datetime.timedelta(days=3)).strftime(
-                "%Y-%m-%dT%H:%M"
-            ),        }
+            "total_guests": 2,
+            "date": book_date(),        }
 
         response = self.client.post(self.url, data, follow=True)
         message = list(response.context.get("messages"))[0]
@@ -197,6 +196,14 @@ class BookingLoungeTests(TestCase):
         expected_queryset = Table.objects.filter(lounge_id=self.lounge.id)
 
         self.assertEqual(list(current_queryset), list(expected_queryset))
+
+    def test_lounge_context(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, follow=True)
+        context_lounge = response.context["lounge"]
+
+        self.assertEqual(context_lounge, self.lounge)
+
 
 class MyBookingsTests(TestCase):
     def setUp(self):
@@ -226,6 +233,7 @@ class MyBookingsTests(TestCase):
         response = self.client.get(self.url)
         context = response.context["bookings"]
         self.assertEqual(list(context), [self.booking2])
+
 
 class DeleteMyBookingsTests(TestCase):
     def setUp(self):
@@ -265,6 +273,7 @@ class DeleteMyBookingsTests(TestCase):
         self.assertEqual(list(deleted_booking_queryset), [])
         self.assertRedirects(response, "/my-bookings", status_code=302)
 
+
 class UpdateMyBookingsTests(TestCase):
     def setUp(self):
         self.user = UserFactory(username="nino")
@@ -294,9 +303,78 @@ class UpdateMyBookingsTests(TestCase):
         self.assertTemplateUsed(response, "update_booking.html")
 
    
-    # def test_update_booking_context(self):
-    #     self.client.force_login(self.user)
-    #     response = self.client.get(self.url)
+    def test_update_booking_context(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
 
-    #     current_context = response.context["booking_form"]
-    #     self.assertIsInstance(current_context, BookingForm)
+        current_context = response.context["booking_form"]
+        self.assertIsInstance(current_context, BookingForm)
+
+
+    def test_successful_update(self):
+        """ change table to duo table """
+        self.client.force_login(self.user)
+        duo_table = LoungeBookFactory(name="Duo", lounge=self.lounge)
+
+        data = {
+            "table": duo_table.id,
+            "date": book_date(),
+            "total_guests": 2,
+        }
+
+        response = self.client.post(self.url, data, follow=True)
+        message = list(response.context.get("messages"))[0]
+
+        self.assertEqual(message.tags, "info")
+        self.assertTrue(f"Thank you, you have successfully updated your booking with {self.booking.lounge.name}" in message.message)
+        self.assertRedirects(response, "/my-bookings", status_code=302)
+
+
+class BookingFormTest(TestCase):
+    def setUp(self):
+        self.lounge= LoungeFactory()
+        self.table = LoungeBookFactory(lounge=self.lounge, capacity=3)
+        self.date = book_date()  # future date by default
+        self.data = {"table": self.table.id, "date": self.date}
+
+    def test_over_capacity_booking(self):
+        self.data["total_guests"] = 8 #booking over capacity
+
+        form = BookingForm(self.lounge, self.data)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["total_guests"],
+            [f"The maximum table capacity is {self.table.capacity}"]
+        )
+
+    
+    def test_exact_capacity_booking(self):
+        self.data["total_guests"] = 3   #testing exact capacity
+        form = BookingForm(self.lounge, self.data)
+
+        self.assertTrue(form.is_valid())
+
+    def test_less_than_capacity_booking(self):
+        self.data["total_guests"] = 2  # lower number than capacity
+        form = BookingForm(self.lounge, self.data)
+
+        self.assertTrue(form.is_valid())
+
+    def test_zero_capacity_booking(self):
+        self.data["total_guests"] = 0  # lower number than capacity
+        form = BookingForm(self.lounge, self.data)
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["total_guests"],
+            ["Please choose a valid number of guests for your order."],
+        )
+
+
+def book_date(days=3, hours=1, minutes=30, past=False):
+    today = datetime.datetime.today()
+    delta = datetime.timedelta(days, hours, minutes)
+    date = today - delta if past else today + delta
+
+    return date.strftime("%Y-%m-%dT%H:%M")
+

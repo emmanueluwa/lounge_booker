@@ -42,7 +42,7 @@ class BookingForm(forms.ModelForm):
     )
 
     def __init__(self, lounge, *args, **kwargs):
-        super(BookingForm, self).__init__(*args, *kwargs)
+        super(BookingForm, self).__init__(*args, **kwargs)
         self.fields["table"].queryset = Table.objects.filter(
             lounge_id=lounge.id
         )
@@ -55,13 +55,24 @@ class BookingForm(forms.ModelForm):
         fields = (
           'table',
           'date',
+          'total_guests'
         )
 
     def clean(self):
         cleaned_data = super().clean()
 
         date = cleaned_data.get("date")
+        total_guests = cleaned_data.get("total_guests") 
+        table = cleaned_data.get("table") 
+
+
+        if total_guests is not None:
+          if total_guests > table.capacity:
+              raise ValidationError({"total_guests": [f"The maximum table capacity is {table.capacity}"]})
+
+          if total_guests < 1:
+              raise ValidationError({"total_guests": ["Please choose a valid number of guests for your order."]})
 
         if date:
             if date < timezone.now():
-                raise ValidationError("Please choose a date and time that is in the future, thank you.", params={"date": date})
+                raise ValidationError("Please choose a date and time that is in the future, thank you.")

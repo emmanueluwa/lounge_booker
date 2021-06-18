@@ -1,5 +1,7 @@
 {% extends "base.html" %} {% block content %}
 <h1>Book Lounge</h1>
+<h3>{{ lounge.name }}</h3>
+
 <form method="POST">
   {% csrf_token %} {{booking_form.as_p }}
   <button type="submit">Book Lounge</button>

@@ -83,7 +83,7 @@ def book_lounge(request, lounge_id):
     else:
         form = BookingForm(lounge)
 
-    return render(request=request, template_name="book_lounge.html", context={"booking_form": form},)
+    return render(request=request, template_name="book_lounge.html", context={"booking_form": form, "lounge": lounge},)
 
 
 
@@ -117,7 +117,15 @@ def update_booking(request, booking_id):
     booking = get_object_or_404(Booking, pk=booking_id)
 
     booking_form = {"booking_form": BookingForm(booking.lounge, instance=booking)}
-    breakpoint()
+
+    if request.method == "POST":
+        form = BookingForm(booking.lounge, request.POST, instance=booking)
+
+        if form.is_valid():
+            form.save()
+            messages.info(request, f"Thank you, you have successfully updated your booking with {booking.lounge.name}")
+            return redirect("lounge_booker:my-bookings")
+
     return render(request, "update_booking.html", context=booking_form)
 
 
