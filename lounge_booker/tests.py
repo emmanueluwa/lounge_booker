@@ -6,7 +6,7 @@ import datetime
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from .factories import LoungeFactory, LoungeBookFactory, UserFactory, BookingFactory
+from .factories import LoungeFactory, LoungeBookFactory, UserFactory, BookingFactory, SettingFactory
 from .forms import BookingForm, UserForm
 from .models import Lounge, Table, Booking
 from django.contrib.auth.forms import AuthenticationForm
@@ -144,8 +144,11 @@ class BookingLoungeTests(TestCase):
     def setUp(self):
         self.user = UserFactory()
         self.lounge = LoungeFactory()
+        self.setting = SettingFactory(lounge=self.lounge, min_guest=2)
         self.table = LoungeBookFactory(lounge=self.lounge)
         self.url = f"/book-lounge/{self.lounge.id}"
+        
+        
 
     def test_authentication(self):
         response = self.client.get(self.url)
@@ -278,6 +281,7 @@ class UpdateMyBookingsTests(TestCase):
     def setUp(self):
         self.user = UserFactory(username="nino")
         self.lounge = LoungeFactory()
+        self.setting = SettingFactory(lounge=self.lounge, min_guest=2)
         self.table = LoungeBookFactory(lounge=self.lounge)
         self.booking = BookingFactory(
             user=self.user, lounge=self.lounge, table=self.table
@@ -319,7 +323,7 @@ class UpdateMyBookingsTests(TestCase):
         data = {
             "table": duo_table.id,
             "date": book_date(),
-            "total_guests": 2,
+            "total_guests ": 2,
         }
 
         response = self.client.post(self.url, data, follow=True)
@@ -332,13 +336,16 @@ class UpdateMyBookingsTests(TestCase):
 
 class BookingFormTest(TestCase):
     def setUp(self):
+        self.capacity = 7
+        self.min_guest = 3
         self.lounge= LoungeFactory()
-        self.table = LoungeBookFactory(lounge=self.lounge, capacity=3)
+        self.table = LoungeBookFactory(lounge=self.lounge, capacity=self.capacity)
         self.date = book_date()  # future date by default
         self.data = {"table": self.table.id, "date": self.date}
+        self.setting = SettingFactory(lounge=self.lounge, min_guest=self.min_guest)
 
     def test_over_capacity_booking(self):
-        self.data["total_guests"] = 8 #booking over capacity
+        self.data["total_guests"] = self.capacity + 1
 
         form = BookingForm(self.lounge, self.data)
         self.assertFalse(form.is_valid())
@@ -349,13 +356,13 @@ class BookingFormTest(TestCase):
 
     
     def test_exact_capacity_booking(self):
-        self.data["total_guests"] = 3   #testing exact capacity
+        self.data["total_guests"] = self.capacity
         form = BookingForm(self.lounge, self.data)
 
         self.assertTrue(form.is_valid())
 
     def test_less_than_capacity_booking(self):
-        self.data["total_guests"] = 2  # lower number than capacity
+        self.data["total_guests"] = self.capacity - 1
         form = BookingForm(self.lounge, self.data)
 
         self.assertTrue(form.is_valid())
@@ -369,6 +376,35 @@ class BookingFormTest(TestCase):
             form.errors["total_guests"],
             ["Please choose a valid number of guests for your order."],
         )
+
+    def test_exact_min_guest(self):
+        self.data["total_guests"] = self.min_guest
+        form = BookingForm(self.lounge, self.data)
+        
+        self.assertTrue(form.is_valid())
+
+
+    def test_below_min_guest(self):
+        self.data["total_guests"] = self.min_guest -1
+        form = BookingForm(self.lounge, self.data)
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["total_guests"],
+            [f"The minimum guests per booking is: {self.min_guest}"])
+
+
+    def test_booking_in_the_past(self):
+        self.data["date"] = book_date(days=3, past=True)
+        form = BookingForm(self.lounge, self.data)
+
+        self.assertEquals(form.errors["date"], ["Please choose a date and time that is in the future, thank you."])
+        self.assertFalse(form.is_valid())
+
+
+
+
+
 
 
 def book_date(days=3, hours=1, minutes=30, past=False):

@@ -46,7 +46,7 @@ class BookingForm(forms.ModelForm):
         self.fields["table"].queryset = Table.objects.filter(
             lounge_id=lounge.id
         )
-        
+        self.lounge = lounge
 
 
 
@@ -63,16 +63,22 @@ class BookingForm(forms.ModelForm):
 
         date = cleaned_data.get("date")
         total_guests = cleaned_data.get("total_guests") 
-        table = cleaned_data.get("table") 
+        table = cleaned_data.get("table")
+        min_guest = self.lounge.setting.min_guest
 
 
         if total_guests is not None:
-          if total_guests > table.capacity:
-              raise ValidationError({"total_guests": [f"The maximum table capacity is {table.capacity}"]})
+            if total_guests > table.capacity:
+                raise ValidationError({"total_guests": [f"The maximum table capacity is {table.capacity}"]})
 
-          if total_guests < 1:
-              raise ValidationError({"total_guests": ["Please choose a valid number of guests for your order."]})
+            if total_guests < 1:
+                raise ValidationError({"total_guests": ["Please choose a valid number of guests for your order."]})
+
+            if total_guests < min_guest:
+                raise ValidationError({"total_guests": [f"The minimum guests per booking is: {min_guest}"]})
+
+
 
         if date:
             if date < timezone.now():
-                raise ValidationError("Please choose a date and time that is in the future, thank you.")
+                raise ValidationError({"date": ["Please choose a date and time that is in the future, thank you."]})
